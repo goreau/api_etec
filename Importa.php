@@ -7,13 +7,13 @@
      /* example: http://200.144.1.24/etec/importa.php?tipo=cliente"
       * 
       */
-     public function usuario(){
+     public function produto(){
         $dados = array(); 
         
         $bd = new database();
         $sql = "SELECT nome, login, senha, nivel, email, 1 as status FROM usuario"; 
-        $bd->setSql($sql);
-        return $bd->query();
+       // $bd->setSql($sql);
+      //  return $bd->query();
      }
      
      public function cliente(){
@@ -21,15 +21,15 @@
         
         $bd = new database();
         $sql = "SELECT nome, email, endereco, dt_nascimento, telefone, id_mobile as id_cliente, 1 as status FROM cliente"; 
-        $bd->setSql($sql);
+      //  $bd->setSql($sql);
       //  $dados["cliente"] = $bd->query();
             //    print_r($dados);
      //   return array("dados"=>$dados);
-        return $bd->query();
+      //  return $bd->query();
      }
   }
   
   
   $rest = new RestServer();
-  $rest->addServiceClass(Recebe);
+  $rest->addServiceClass('Recebe');
   $rest->handle();
