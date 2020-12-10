@@ -21,7 +21,7 @@ class database {
     function __construct() {
         $this->hostname = 'localhost';
         $this->user = 'root';
-        $this->senha = '';
+        $this->senha = 'AHag654321';
         $this->banco = 'etec_sisoo';
         $this->conecta();
     }
@@ -29,7 +29,8 @@ class database {
               
     private function conecta(){
         try {
-            $this->conn = new PDO("mysql:host=" . $this->hostname . ";dbname=" . $this->banco.", ".$this->user . ", " . $this->senha);
+            $this->conn = new PDO("mysql:host=" . $this->hostname . ";dbname=" . $this->banco , $this->user , $this->senha);
+
             // set the PDO error mode to exception
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             //echo "Connected successfully";
@@ -55,7 +56,6 @@ class database {
             echo "Error: " . $e->getMessage();
           }
           $this->conn = null; 
-
           return $result;
     }
     

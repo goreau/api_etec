@@ -1,5 +1,5 @@
 <?php
-    require_once './entidades/usuario.php';
+    
 
     
 ?>

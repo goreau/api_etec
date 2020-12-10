@@ -52,7 +52,7 @@ switch ($tipo) {
             $tab = new cliente(0);
            // echo $linha[$i]['nome'];
            $tab->__set('nome',$linha[$i]->nome);
-           $tab->__set('nascimento',$linha[$i]->nascimento);
+           $tab->__set('dt_nascimento',$linha[$i]->nascimento);
            
            $res = $tab->insere();
            //cria a resposta, segundo resultado da inserção

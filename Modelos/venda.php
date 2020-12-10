@@ -14,7 +14,7 @@
 class venda {
     private $id_venda;
     //private $id_mobile;
-    private $data, $id_cliente;
+    private $data_venda, $id_cliente;
    // private $endereco, $telefone, $email;
     
     function __construct($id_venda = 0) {
@@ -25,13 +25,13 @@ class venda {
         $db = new database();
         $c = $db->getConnection();
 
-        $sql = "INSERT INTO venda(data, id_cliente) "
+        $sql = "INSERT INTO venda(data_venda, id_cliente) "
                 . "values(:data, :id_cliente)";
         $st = $c->prepare($sql);
                 
     
-        $st->bindParam(':data', $this->nome, PDO::PARAM_STR);
-        $st->bindParam(':id_cliente', $this->dt_nascimento, PDO::PARAM_INT);
+        $st->bindParam(':data', $this->data_venda, PDO::PARAM_STR);
+        $st->bindParam(':id_cliente', $this->id_cliente, PDO::PARAM_INT);
 
         if (!$st->execute()) {
             $x = $c->errorInfo();
