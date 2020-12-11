@@ -7,108 +7,113 @@
  */
 
 include_once 'database.php';
-require_once './entidades/produto.php';
-require_once './entidades/cliente.php';
-require_once './entidades/venda.php';
-require_once './entidades/det_venda.php';
+require_once './modelos/produto.php';
+require_once './modelos/cliente.php';
+require_once './modelos/venda.php';
+require_once './modelos/det_venda.php';
 
 $json = filter_input(INPUT_POST, "dados");
-$tipo = filter_input(INPUT_POST, "tipo");
-//$nome = filter_input(INPUT_POST, "nome");
-//$tipo = "usuario";
-//$json =  '[{"nome":"Jose da Silva", "login":"silva", "senha":"silva", "nivel":"1", "id_mobile":"1"}, {"nome":"Pedro Moreira", "login":"moreira", "senha":"moreira", "nivel":"2","id_mobile":"2"}]';
+//$json = filter_input(INPUT_GET, "dados");
+//echo $json;
+$linha = json_decode($json, true);
+
+$tipo = $linha['tipo'];
+$dados = json_decode(json_encode($linha['col']), FALSE);
+//$tipo = 'cliente';
+//$dados =  '{"tipo":"cliente","col":[{"nascimento":"10-11-2020","nome":"Dududu de Dadada","_id":"1"}]}';
 if (get_magic_quotes_gpc()) {
     $json = stripslashes($json);
 }
-//Decode JSON into an Array
-$linha = json_decode($json);
+
 $a = array();
 $b = array();
 //Loop through an Array and insert data read from JSON into DB
 switch ($tipo) {
     case "produto":
-        for ($i = 0; $i < count($linha); $i++) {
-           // echo $linha[$i]['nome'];
-            $tab = new produto(0);
-            $tab->__set('nome',$linha[$i]->nome);
-            $tab->__set('tipo',$linha[$i]->tipo);
-            $tab->__set('preco',$linha[$i]->preco);
+        $tab = new produto(0);
+        foreach ($dados as $row){          
+            $tab->__set('nome',$row->nome);
+            $tab->__set('tipo',$row->tipo);
+            $tab->__set('preco',$row->preco);
             
             $res = $tab->insere();
             //cria a resposta, segundo resultado da inserção
             if ($res>0) {
-                $b["id"] = $linha[$i]->id_produto;
+                $b["id"] = $row->_id;
                 $b["status"] = '1';
                 array_push($a, $b);
             } else {
-                $b["id"] = $linha[$i]->id_produto;
+                $b["id"] = $row->_id;
                 $b["status"] = '0';
                 array_push($a, $b);
             }
         }
         break;
     case "cliente":
-        for ($i = 0; $i < count($linha); $i++) {
-            $tab = new cliente(0);
-           // echo $linha[$i]['nome'];
-           $tab->__set('nome',$linha[$i]->nome);
-           $tab->__set('dt_nascimento',$linha[$i]->nascimento);
-           
-           $res = $tab->insere();
-           //cria a resposta, segundo resultado da inserção
-           if ($res>0) {
-               $b["id"] = $linha[$i]->id_cliente;
-               $b["status"] = '1';
-               array_push($a, $b);
+        $tab = new cliente(0);
+        foreach ($dados as $row){
+            $tab->__set('nome',$row->nome);
+            $tab->__set('dt_nascimento',$row->nascimento);
+
+            $res = $tab->insere();
+            //cria a resposta, segundo resultado da inserção
+            if ($res>0) {
+                $b["id"] = $row->_id;
+                $b["status"] = '1';
+                array_push($a, $b);
            } else {
-               $b["id"] = $linha[$i]->id_cliente;
-               $b["status"] = '0';
-               array_push($a, $b);
+                $b["id"] = $row->_id;
+                $b["status"] = '0';
+                array_push($a, $b);
            }
         }
         break;
     case "venda":
-            for ($i = 0; $i < count($linha); $i++) {
-                $tab = new venda(0);
+        foreach ($dados as $row){
+            $tab = new venda(0);
                // echo $linha[$i]['nome'];
-               $tab->__set('nome',$linha[$i]->nome);
-               $tab->__set('nascimento',$linha[$i]->nascimento);
+               $tab->__set('id_cliente',$row->id_cliente);
+               $tab->__set('data_venda',$row->data_venda);
                
                $res = $tab->insere();
                //cria a resposta, segundo resultado da inserção
                if ($res>0) {
-                    if ($this->insereDetVenda($linha)){
-                        $b["id"] = $linha[$i]->id_cliente;
+                    if (insereDetVenda($row)){
+                        $b["id"] = $row->id_cliente;
                         $b["status"] = '1';
                         array_push($a, $b);
                     } else {
-                        $b["id"] = $linha[$i]->id_cliente;
+                        $b["id"] = $row->id_cliente;
                         $b["status"] = '0';
                         array_push($a, $b);
                     } 
                } else {
-                   $b["id"] = $linha[$i]->id_cliente;
+                   $b["id"] = $row->id_cliente;
                    $b["status"] = '0';
                    array_push($a, $b);
                }
             }
             break;
     default :
-        echo "ferrou";
+        echo "ferrou $tipo";
         break;
 }
 
 function insereDetVenda($linha){
-    $dets = $linha->detalhes;
-    $idv  = $linha->id_venda;
-    $res  = true;
     
-    for ($i = 0; $i < count($dets); $i++) {
-        $tab = new det_venda(0, $idv);
-        // echo $linha[$i]['nome'];
-        $tab->__set('nome',$linha[$i]->nome);
-        $tab->__set('nascimento',$linha[$i]->nascimento);
-       
+    if ($linha->detalhes=="[]"){
+        return true;
+    }
+    $dados = json_decode($linha->detalhes, FALSE);
+
+    $idv  = $linha->_id;
+    $res  = true;
+    $tab = new det_venda(0, $idv);
+    foreach ($dados as $row){
+        $tab->__set('id_produto',$row->id_produto);
+        $tab->__set('quantidade',$row->quantidade);
+        $tab->__set('subtotal',$row->subtotal);
+
         $res = $tab->insere();
         //cria a resposta, segundo resultado da inserção
         if ($res>0) {

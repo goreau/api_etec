@@ -29,8 +29,8 @@ class venda {
                 . "values(:data, :id_cliente)";
         $st = $c->prepare($sql);
                 
-    
-        $st->bindParam(':data', $this->data_venda, PDO::PARAM_STR);
+        $dt =  $db->dataVai($this->data_venda);
+        $st->bindParam(':data', $dt, PDO::PARAM_STR);
         $st->bindParam(':id_cliente', $this->id_cliente, PDO::PARAM_INT);
 
         if (!$st->execute()) {
@@ -62,7 +62,7 @@ class venda {
     
     function __set($name, $value)
     {
-        $this->name = $value;
+        $this->$name = $value;
     }
 
     function __get($name)

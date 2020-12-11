@@ -14,7 +14,7 @@
 class det_venda {
     private $id_det_venda, $id_venda;
     //private $id_mobile;
-    private $nome, $tipo, $preco;
+    private $nome, $tipo, $subtotal;
    // private $endereco, $telefone, $email;
     
     function __construct($id_det_venda = 0, $id_venda = 0) {
@@ -26,14 +26,14 @@ class det_venda {
         $db = new database();
         $c = $db->getConnection();
 
-        $sql = "INSERT INTO det_venda(id_venda, id_produto, quantidade, unitario) "
+        $sql = "INSERT INTO det_venda(id_venda, id_produto, quantidade, subtotal) "
                 . "values(:id_venda, :id_produto, :quantidade, :unitario)";
         $st = $c->prepare($sql);
                 
         $st->bindParam(':id_venda', $this->id_venda, PDO::PARAM_INT);
-        $st->bindParam(':id_produto', $this->nome, PDO::PARAM_INT);
-        $st->bindParam(':quantidade', $this->dt_nascimento, PDO::PARAM_INT);
-        $st->bindParam(':unitario', $this->preco, PDO::PARAM_STR);
+        $st->bindParam(':id_produto', $this->id_produto, PDO::PARAM_INT);
+        $st->bindParam(':quantidade', $this->quantidade, PDO::PARAM_INT);
+        $st->bindParam(':unitario', $this->subtotal, PDO::PARAM_STR);
 
         if (!$st->execute()) {
             $x = $c->errorInfo();
@@ -56,7 +56,7 @@ class det_venda {
     
     function __set($name, $value)
     {
-        $this->name = $value;
+        $this->$name = $value;
     }
 
     function __get($name)

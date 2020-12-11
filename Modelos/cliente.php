@@ -25,13 +25,13 @@ class cliente {
         $db = new database();
         $c = $db->getConnection();
 
-        $sql = "INSERT INTO cliente(nome,nascimento) "
+        $sql = "INSERT INTO cliente(nome,dt_nascimento) "
                 . "values(:nome, :nascimento)";
         $st = $c->prepare($sql);
                 
-    
         $st->bindParam(':nome', $this->nome, PDO::PARAM_STR);
-        $st->bindParam(':nascimento', $this->dt_nascimento, PDO::PARAM_STR);
+        $dt = $db->dataVai($this->dt_nascimento);
+        $st->bindParam(':nascimento', $dt, PDO::PARAM_STR);
 
         if (!$st->execute()) {
             $x = $c->errorInfo();
@@ -54,7 +54,8 @@ class cliente {
     
     function __set($name, $value)
     {
-        $this->name = $value;
+        //echo $name . ' com ' . $value;
+        $this->$name = $value;
     }
 
     function __get($name)

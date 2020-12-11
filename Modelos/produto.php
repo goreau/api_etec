@@ -31,7 +31,7 @@ class produto {
                 
     
         $st->bindParam(':nome', $this->nome, PDO::PARAM_STR);
-        $st->bindParam(':tipo', $this->dt_nascimento, PDO::PARAM_INT);
+        $st->bindParam(':tipo', $this->tipo, PDO::PARAM_INT);
         $st->bindParam(':preco', $this->preco, PDO::PARAM_STR);
 
         if (!$st->execute()) {
@@ -55,7 +55,7 @@ class produto {
     
     function __set($name, $value)
     {
-        $this->name = $value;
+        $this->$name = $value;
     }
 
     function __get($name)
